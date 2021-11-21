@@ -3,7 +3,7 @@ import { View, Button, TextInput } from 'react-native'
 
 import firebase from 'firebase/compat/app';
 
-export class Register extends Component {
+export class Login extends Component {
 
     constructor(props){
         super(props);
@@ -12,7 +12,7 @@ export class Register extends Component {
             email: '',
             password: ''
         }
-       this.onSignUp = this.onSignUp.bind(this)
+       this.onSignIn = this.onSignIn.bind(this)
     }
 
     onSignIn(){
