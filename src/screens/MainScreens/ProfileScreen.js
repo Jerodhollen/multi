@@ -1,0 +1,454 @@
+import React, { useContext, useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  SafeAreaView,
+  TouchableHighlight,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import { wsize, hsize } from '../../entities/constants';
+import { Feather, Entypo } from '@expo/vector-icons';
+import { useIsFocused } from '@react-navigation/native';
+import Button from '../../components/Button';
+import LoadingScreen from '../OtherScreens/LoadingScreen';
+import { AuthContext } from '../../services/context/AuthContext';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import PhotoCarousel from '../../components/PhotoCarousel';
+import PhotoGrid from '../../components/PhotoGrid';
+import UserModal from '../../components/UserModal';
+import * as userAPI from '../../services/api/user';
+import * as lookAPI from '../../services/api/look';
+import * as itemAPI from '../../services/api/item';
+import FontText from '../../components/FontText';
+
+const tabs = {
+  items: 'items',
+  looks: 'looks',
+  bookmarks: 'bookmarks',
+};
+
+const LooksTab = React.memo(({ navigation }) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const fetchData = () => lookAPI.getUserLooks();
+  useEffect(() => {
+    fetchData().then((allData) => {
+      setData(allData);
+      setLoading(false);
+    });
+  }, []);
+  if (loading) {
+    return <LoadingScreen />;
+  }
+  return (
+    <ScrollView style={{ height: '40%', backgroundColor: 'white' }}>
+      <FlatList
+        numColumns={3}
+        data={data}
+        onRefresh={() => {
+          setLoading(true);
+          fetchData().then((res) => {
+            setData(res);
+            setLoading(false);
+          });
+        }}
+        refreshing={loading}
+        renderItem={({ item }) => {
+          return (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                // navigation.navigate('AlternativeLook', item);
+                navigation.navigate('AlternativeLook', { item: item, items: item.images });
+              }}
+            >
+              {item.coverImage ? (
+                <Image
+                  style={{ width: wsize(123), height: wsize(123) }}
+                  source={{ uri: item.coverImage }}
+                />
+              ) : (
+                  <TouchableOpacity onPress={() => {
+                    navigation.navigate('AlternativeLook', { item: item, items: item.images });
+                  }}>
+                    <PhotoGrid
+                      items={item.images}
+                      clickEventListener={() => {
+                        navigation.navigate('AlternativeLook', { item: item.data, items: item.data.images });
+                        // navigation.navigate('AlternativeLook', item);
+                      }}
+                      gridStyle={{
+                        width: wsize(123),
+                        height: wsize(123),
+                        overflow: 'hidden',
+                      }}
+                      style={{ width: wsize(123), height: wsize(123) }}
+                      imageStyle={{ width: 50, height: 50 }}
+                      small
+                    />
+                  </TouchableOpacity>
+                )}
+            </TouchableWithoutFeedback>
+          );
+        }}
+      />
+    </ScrollView>
+  );
+});
+
+const ItemsTab = React.memo(function ({ navigation, user }) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const fetchData = () => itemAPI.getUserItems();
+  useEffect(() => {
+    fetchData().then((allData) => {
+      setData(allData);
+      setLoading(false);
+    });
+  }, []);
+  if (loading) {
+    return <LoadingScreen fullscreen />;
+  }
+  return (
+    <ScrollView style={{ height: '40%', backgroundColor: 'white' }}>
+      <FlatList
+        numColumns={3}
+        data={data}
+        onRefresh={() => {
+          setLoading(true);
+          fetchData().then((res) => {
+            setData(res);
+            setLoading(false);
+          });
+        }}
+        refreshing={loading}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Item', item);
+            }}>
+            <Image
+              style={{ width: wsize(124), height: wsize(123) }}
+              source={{ uri: item.image }}
+            />
+          </TouchableOpacity>
+        )}
+      />
+    </ScrollView>
+  );
+});
+
+const BookmarsTab = React.memo(({ navigation, user }) => {
+  return (
+    <ScrollView style={{ height: '40%', backgroundColor: 'white' }}>
+      <FlatList
+        numColumns={3}
+        data={[...user.saved].reverse()}
+        renderItem={({ item }) => {
+          if (item.item)
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Item', { fetchId: item.id });
+                }}>
+                <Image
+                  style={{ width: wsize(124), height: wsize(123) }}
+                  source={{ uri: item.data.image }}
+                />
+              </TouchableOpacity>
+            );
+          return (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                navigation.navigate('AlternativeLook', { item: item.data, items: item.data.images })
+                // navigation.navigate('AlternativeLook', item.data);
+              }}>
+              {item.data.coverImage ? (
+                <Image
+                  style={{ width: wsize(123), height: wsize(123) }}
+                  source={{ uri: item.data.coverImage }}
+                />
+              ) : (
+                  <TouchableOpacity onPress={() => {
+                    navigation.navigate('AlternativeLook', { item: item.data, items: item.data.images });
+                  }}>
+                    <PhotoGrid
+                      items={item.data.images}
+                      clickEventListener={() => {
+                        // navigation.navigate('AlternativeLook', { item: item.data, items: item.data.images });
+                      }}
+                      gridStyle={{
+                        width: wsize(123),
+                        height: wsize(123),
+                        overflow: 'hidden',
+                      }}
+                      style={{ width: wsize(123), height: wsize(123) }}
+                      imageStyle={{ width: 50, height: 50 }}
+                      small
+                      fromProfile
+                    />
+                  </TouchableOpacity>
+                )}
+            </TouchableWithoutFeedback>
+          );
+        }}
+      />
+    </ScrollView>
+  );
+});
+const ProfileScreen = ({ navigation }) => {
+  const authContext = useContext(AuthContext);
+  const [modalVisible, setModalVisible] = useState(false);
+  const { user, logout } = authContext;
+  const { bookmarks, items, looks } = tabs;
+  const [userExtraInfo, setUserExstraInfo] = useState(null);
+  const [currentTab, setCurrentTab] = useState(looks);
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    userAPI.getUserInfo(user.uid).then((doc) => setUserExstraInfo(doc.data()));
+  }, [isFocused]);
+
+  navigation.setOptions({
+    headerRight: () => (
+      <TouchableOpacity
+        onPress={() => {
+          setModalVisible(true);
+        }}>
+        <Entypo
+          name="dots-three-horizontal"
+          size={24}
+          color="black"
+          style={{ marginRight: 15 }}
+        />
+      </TouchableOpacity>
+    ),
+  });
+
+  if (!userExtraInfo) return <LoadingScreen fullscreen />;
+  return (
+    <View style={styles.container}>
+      <View style={styles.profileInitialContainer}>
+        <Image
+          style={styles.profilePhoto}
+          source={{
+            uri: user.photoURL,
+          }}
+        />
+        <View style={styles.profileNameContainer}>
+          <FontText font="MYRIADPRO" style={styles.profileName}>
+            {user.displayName}
+          </FontText>
+          <FontText font="Rubik" style={styles.profileType}>
+            {userExtraInfo.status}
+          </FontText>
+          <View 
+          style={{
+            flexDirection: 'row',
+            marginLeft: 15,
+
+            }}>
+          <TouchableOpacity
+              style={styles.followers}
+              onPress={() => {
+                navigation.navigate('Friends');
+              }}>
+              <FontText font="Rubik" style={styles.followersNumbers}>
+                {userExtraInfo.friends.length}
+              </FontText>
+              <FontText font="Rubik" style={styles.followersText}>
+                alters
+              </FontText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.followers}
+              onPress={() => {
+                navigation.navigate('Subs');
+              }}>
+              <FontText font="Rubik" style={styles.followersNumbers}>
+                {userExtraInfo.subs.length}
+              </FontText>
+              <FontText font="Rubik" style={styles.followersText}>
+                subs
+              </FontText>
+            </TouchableOpacity>
+            </View>
+        </View>
+      </View>
+      <View style={styles.profileInfoContainer}>
+        <View style={styles.profileInfo}>
+          <FontText font="Rubik" style={styles.textInfo}>
+            {userExtraInfo.city}
+          </FontText>
+        </View>
+        <TouchableOpacity style={styles.profileInfo}>
+          <FontText font="Rubik" style={styles.linkInfo}>
+            {userExtraInfo.link}
+          </FontText>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Edit Profile"
+          onPress={() => {
+            navigation.navigate('EditProfile', {
+              userExtraInfo: {
+                fullName: userExtraInfo.fullName,
+                photoURL: userExtraInfo.photoURL,
+                userName: userExtraInfo.userName,
+                status: userExtraInfo.status,
+                city: userExtraInfo.city,
+                link: userExtraInfo.link,
+                description: userExtraInfo.description,
+                email: userExtraInfo.email,
+                phone: userExtraInfo.phone,
+                gender: userExtraInfo.gender,
+              },
+            });
+          }}
+          style={styles.button}
+          titleStyle={{
+            color: 'white',
+            fontSize: wsize(18),
+          }}
+        />
+        <Button
+          title="New Alter"
+          onPress={() => {
+            navigation.navigate('NewAlter', {
+              userExtraInfo: {
+                fullName: userExtraInfo.fullName,
+                photoURL: userExtraInfo.photoURL,
+                userName: userExtraInfo.userName,
+                status: userExtraInfo.status,
+                city: userExtraInfo.city,
+                link: userExtraInfo.link,
+                description: userExtraInfo.description,
+                email: userExtraInfo.email,
+                phone: userExtraInfo.phone,
+                gender: userExtraInfo.gender,
+              },
+            });
+          }}
+          style={styles.button}
+          titleStyle={{
+            color: 'white',
+            fontSize: wsize(18),
+          }}
+        />
+        </View>
+      <View style={styles.tabContainer}>
+        <TouchableOpacity onPress={() => setCurrentTab(looks)}>
+          <Feather
+            name="package"
+            size={30}
+            color={currentTab === looks ? 'blue' : 'black'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setCurrentTab(items)}>
+          <Feather
+            name="file"
+            size={30}
+            color={currentTab === items ? 'blue' : 'black'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setCurrentTab(bookmarks)}>
+          <Feather
+            name="bookmark"
+            size={30}
+            color={currentTab === bookmarks ? 'blue' : 'black'}
+          />
+        </TouchableOpacity>
+      </View>
+      <View>
+        {currentTab === looks && (
+          <LooksTab navigation={navigation} user={user} />
+        )}
+        {currentTab === items && (
+          <ItemsTab navigation={navigation} user={user} />
+        )}
+        {currentTab === bookmarks && (
+          <BookmarsTab navigation={navigation} user={userExtraInfo} />
+        )}
+      </View>
+      <UserModal
+        setModalVisible={setModalVisible}
+        visible={modalVisible}
+        navigation={navigation}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  profileInitialContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: wsize(25),
+    paddingVertical: hsize(23),
+  },
+  profilePhoto: {
+    width: wsize(80),
+    height: wsize(80),
+    borderRadius: wsize(40),
+  },
+  profileNameContainer: {
+    marginLeft: wsize(22),
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+  profileName: {
+    fontSize: wsize(24),
+    fontWeight: 'bold',
+    color: '#262626',
+  },
+  profileType: {
+    fontSize: wsize(14),
+  },
+  profileInfoContainer: {
+    paddingTop: hsize(14),
+    alignSelf: 'center',
+  },
+  profileInfo: {
+    flexDirection: 'row',
+  },
+  textInfo: {
+    fontSize: wsize(12),
+  },
+  followers: {
+    flexDirection: 'row',
+    marginRight: wsize(30),
+  },
+  followersNumbers: {
+    fontSize: wsize(15),
+    fontWeight: 'bold',
+    marginRight: wsize(3),
+  },
+  followersText: {
+    fontSize: wsize(15),
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+  },
+  button: {
+    width: wsize(150),
+    height: hsize(40),
+    margin: 15,
+    backgroundColor: '#576490'
+  },
+  tabContainer: {
+    borderWidth: 1,
+    height: hsize(50),
+    alignItems: 'center',
+    borderColor: '#DADBDA',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+});
+
+export default ProfileScreen;

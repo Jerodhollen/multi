@@ -1,17 +1,22 @@
-> Why do I have a folder named ".expo" in my project?
+# Social Media Application for People With Dissociative Identity Disorder
+An application geared toward people with Dissociative Identity Disorder in an attempt for them to have the chance to create new networks of communication with their alters.
 
-The ".expo" folder is created when an Expo project is started using "expo start" command.
 
-> What does the "packager-info.json" file contain?
+<p align="center">
+  <img alt="netflix screens" src="https://i.ibb.co/YcBZSdy/Merged-document.jpg" />
+</p>
 
-The "packager-info.json" file contains port numbers and process PIDs that are used to serve the application to the mobile device/simulator.
+## Install & Build
+First, make sure you have Expo CLI installed: `npm install -g expo-cli`
 
-> What does the "settings.json" file contain?
+Install: `npm i` or `npm install`
 
-The "settings.json" file contains the server configuration that is used to serve the application manifest.
+Run Project Locally: `expo start` or `npm start`
 
-> Should I commit the ".expo" folder?
 
-No, you should not share the ".expo" folder. It does not contain any information that is relevant for other developers working on the project, it is specific to your machine.
+## Stats
 
-Upon project creation, the ".expo" folder is already added to your ".gitignore" file.
+- Expo SDK 38
+- iOS, Android
+- React Navigation v5
+- Firebase v7
