@@ -3,7 +3,7 @@ An application geared toward people with Dissociative Identity Disorder in an at
 
 
 <p align="center">
-  <img alt="netflix screens" src="https://i.ibb.co/YcBZSdy/Merged-document.jpg" />
+  <img alt="netflix screens" src="Screenshots - R2/" />
 </p>
 
 ## Install & Build
