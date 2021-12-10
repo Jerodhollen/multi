@@ -3,7 +3,8 @@ An application geared toward people with Dissociative Identity Disorder in an at
 
 
 <p align="center">
-  <img alt="netflix screens" src="Screenshots - R2/" />
+  <img alt="netflixscreens" src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2"></img> 
+  
 </p>
 
 ## Install & Build
