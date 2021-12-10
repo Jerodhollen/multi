@@ -3,7 +3,19 @@ An application geared toward people with Dissociative Identity Disorder in an at
 
 
 <p align="center">
-  <img alt="netflixscreens" src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2"></img> 
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/1.SignUp.jpg" width="45%"></img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/2.RegularLogin.jpg" width="45%"</img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/3.AccessibleLogin.jpg" width="45%"></img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/4.AlterFeed.1.jpg" width="45%"</img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/5.AlterFeed.2.jpg" width="45%"></img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/6.AddNewPost.jpg" width="45%"</img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/7.PicturePost.jpg" width="45%"></img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/8.%20Profile.jpg" width="45%"</img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/9.%20EditProfile.jpg" width="45%"></img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/10.SelectFromRecent.jpg"</img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/11.SelectFromAlbums.jpg" width="45%"</img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/12.%20NewAlter.jpg" width="45%"></img>
+  <img src="https://github.com/Jerodhollen/multi/blob/main/Screen%20Shots%20-%20R2/13.%20Settings.jpg" width="45%"</img>
   
 </p>
 
